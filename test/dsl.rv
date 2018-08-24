@@ -1,7 +1,3 @@
-## ReactiveView for Mobile develop
-
-### 语法
-```
 # this is comment
 
 Column {
@@ -25,4 +21,3 @@ Column {
     }
     child: include(../../names.vv)
 }
-```

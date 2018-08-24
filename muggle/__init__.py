@@ -111,30 +111,12 @@ def attr():
 
 @generate
 def component():
+    yield ignore
     c_name = yield identifier
     yield l_curly_braces
     attrs = yield (many(attr))
     yield r_curly_braces
     return ('component', c_name, attrs)
-
-
-################################
-# using
-################################
-
-
-keyword_as = lexeme(string('as'))
-clazz = lexeme(regex(r'[\d\w_.]+'))
-keyword_using = lexeme(string('using'))
-
-
-@generate
-def using():
-    yield keyword_using
-    _clazz = yield clazz
-    yield keyword_as
-    _name = yield identifier
-    return ('using', _clazz, _name)
 
 
 ################################
@@ -149,11 +131,3 @@ def include():
     name = yield lexeme(regex(r'[\w\d_./$]+'))
     yield lexeme(string(')'))
     return ('include', name)
-
-
-@generate
-def program():
-    yield ignore
-    u = yield optional(many(using))
-    c = yield component
-    return ('program', u, c)

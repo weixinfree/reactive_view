@@ -1,4 +1,10 @@
-from parser import *
+import sys
+import os
+muggle = os.path.dirname(os.path.dirname(__file__))
+print(muggle)
+sys.path.append(muggle)
+
+from muggle import *
 
 
 def test_identifier():
@@ -9,11 +15,6 @@ def test_unit():
     assert unit.parse('30dp') == ('unit', 30, 'dp')
     assert unit.parse('30px') == ('unit', 30, 'px')
     assert unit.parse('100sp') == ('unit', 100, 'sp')
-
-
-def test_using():
-    result = using.parse('using com.demo.User as user')
-    assert result == ('using', 'com.demo.User', 'user')
 
 
 def test_include():
@@ -151,33 +152,9 @@ def test_component():
                              ('func', 'default', ['DEFAULT_POTRAIT'])])))]))])
 
 
-DEMO = r"""
-# this is comment
-using com.demo.viewModel.UserViewModel as user
-
-Column {
-    w: match
-    h: wrap
-    gravity: center
-    child: Text {
-        w: 30dp
-        # should use wrap
-        h: 20dp
-        textSize: 13sp
-        text: {user.name |> title}
-        visible: {user.name |> len |> gt $, 0}
-        onClick: {v -> user.onClick}
-        onItemClick: {view, position -> user.onItemClick}
-    },
-    child: Image {
-        placeHolder: @drawable/default_portrait
-        scaleType: fitCenter
-        src: {user.portrait |> scale $, 30dp, 40dp}
-    }
-    child: include(../../names.vv)
-}
-
-"""
-
-
-print(program.parse_strict(DEMO))
+def test_file():
+    path = os.path.join(os.path.dirname(__file__), 'dsl.rv')
+    with open(path, encoding='utf-8') as f:
+        content = f.read()
+    result = component.parse(content)
+    assert result[0] == 'component'
