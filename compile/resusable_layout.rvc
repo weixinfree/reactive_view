@@ -1,5 +1,7 @@
-NEW Image
+PUSH Image
+NEW
 PUSH dark
 PUSH color
 RES
-ATTR src
+PUSH src
+ATTR

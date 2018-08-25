@@ -46,7 +46,7 @@ class _Generator:
         _, value, unit = ast
         code(f'PUSH {unit}')
         code(f'PUSH {value}')
-        code(f'UNIT')
+        code(f'UNIT {value}')
 
     def prop(self, ast, code: Callable[[str], None]):
         obj, f, *fields = ast[1]
@@ -75,8 +75,8 @@ class _Generator:
                     code(f'PUSH_TEMP')
                 else:
                     code(f'PUSH {arg}')
-
-        code(f'CALL {f_name}')
+        code(f'PUSH {f_name}')
+        code(f'CALL')
 
     def callback(self, ast, code: Callable[[str], None]):
         _, params, prop = ast
@@ -86,8 +86,9 @@ class _Generator:
             _code(f'PUSH f{p}')
         _translate(prop, _code)
 
-        insturcts = ">".join(instructions)
-        code(f'CALLBACK {insturcts}')
+        insturcts = '"' + "; ".join(instructions) + '"'
+        code(f'PUSH {insturcts}')
+        code(f'CALLBACK')
 
     def pipe(self, ast, code: Callable[[str], None]):
         _, pipes = ast
@@ -99,7 +100,8 @@ class _Generator:
         link = SRC.joinpath(component)
         _process(link)
         dst = _get_dst_file(link)
-        code(f'INCLUDE {dst}')
+        code(f'PUSH {dst}')
+        code(f'INCLUDE')
 
     def computed_value(self, ast, code: Callable[[str], None]):
         _, express = ast
@@ -108,11 +110,13 @@ class _Generator:
     def attr(self, ast, code: Callable[[str], None]):
         _, attr_name, attr_value = ast
         _translate(attr_value, code)
-        code(f'ATTR {attr_name}')
+        code(f'PUSH {attr_name}')
+        code(f'ATTR')
 
     def component(self, ast, code: Callable[[str], None]):
         _, component, attrs = ast
-        code(f'NEW {component}')
+        code(f'PUSH {component}')
+        code(f'NEW')
         for _attr in attrs:
             _translate(_attr, code)
 
