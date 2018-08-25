@@ -1,14 +1,16 @@
 import sys
 import os
+
 muggle = os.path.dirname(os.path.dirname(__file__))
 print(muggle)
 sys.path.append(muggle)
 
-from muggle import *
+from muggle.parser import *
 
 
 def test_identifier():
     assert identifier.parse('30dp') == '30dp'
+    assert identifier.parse('match') == 'match'
 
 
 def test_unit():
@@ -49,6 +51,9 @@ def test_func_simple():
 
 
 def test_callback():
+    result = callback.parse('-> user.onClick')
+    assert result == ('callback', [], ('prop', ['user', 'onClick']))
+
     result = callback.parse('_ -> user.onClick')
     assert result == ('callback', ['_'], ('prop', ['user', 'onClick']))
 

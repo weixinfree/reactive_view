@@ -11,7 +11,7 @@ Column {
         textSize: 13sp
         text: {user.name |> title}
         visible: {user.name |> len |> gt $, 0}
-        onClick: {v -> user.onClick}
+        onClick: {-> user.onClick}
         onItemClick: {view, position -> user.onItemClick}
     },
     child: Image {
@@ -19,5 +19,5 @@ Column {
         scaleType: fitCenter
         src: {user.portrait |> scale $, 30dp, 40dp}
     }
-    child: include(../../names.vv)
+    child: include(resusable_layout.rv)
 }

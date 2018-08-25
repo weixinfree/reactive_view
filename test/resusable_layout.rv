@@ -1,0 +1,3 @@
+Image {
+    src: @color/dark
+}
