@@ -30,53 +30,74 @@ Column {
 ### stack-base 虚拟机指令
 
 ```
-NEW Column
+PUSH Column
+NEW
 PUSH match
-ATTR w
+PUSH w
+ATTR
 PUSH wrap
-ATTR h
+PUSH h
+ATTR
 PUSH center
-ATTR gravity
-NEW Text
+PUSH gravity
+ATTR
+PUSH Text
+NEW
 PUSH dp
 PUSH 30
-UNIT
-ATTR w
+UNIT 30
+PUSH w
+ATTR
 PUSH dp
 PUSH 20
-UNIT
-ATTR h
+UNIT 20
+PUSH h
+ATTR
 PUSH sp
 PUSH 13
-UNIT
-ATTR textSize
+UNIT 13
+PUSH textSize
+ATTR
 PUSH user
 PUSH name
 PROP
-CALL title
-ATTR text
+PUSH title
+CALL
+PUSH text
+ATTR
 PUSH user
 PUSH name
 PROP
-CALL len
+PUSH len
+CALL
 DUP
 STORE_TEMP
 PUSH 0
 PUSH_TEMP
-CALL gt
-ATTR visible
-CALLBACK PUSH user>PUSH onClick>PROP
-ATTR onClick
-CALLBACK PUSH fview>PUSH fposition>PUSH user>PUSH onItemClick>PROP
-ATTR onItemClick
-ATTR child
-NEW Image
+PUSH gt
+CALL
+PUSH visible
+ATTR
+PUSH compile/dsl$1.rvc
+CALLBACK
+PUSH onClick
+ATTR
+PUSH compile/dsl$1.rvc
+CALLBACK
+PUSH onItemClick
+ATTR
+PUSH child
+ATTR
+PUSH Image
+NEW
 PUSH default_portrait
 PUSH drawable
 RES
-ATTR placeHolder
+PUSH placeHolder
+ATTR
 PUSH fitCenter
-ATTR scaleType
+PUSH scaleType
+ATTR
 PUSH user
 PUSH portrait
 PROP
@@ -85,9 +106,14 @@ STORE_TEMP
 PUSH 40dp
 PUSH 30dp
 PUSH_TEMP
-CALL scale
-ATTR src
-ATTR child
-INCLUDE compile/resusable_layout.rvc
-ATTR child
+PUSH scale
+CALL
+PUSH src
+ATTR
+PUSH child
+ATTR
+PUSH compile/resusable_layout.rvc
+INCLUDE
+PUSH child
+ATTR
 ```

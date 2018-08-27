@@ -37,6 +37,16 @@ def _get_dst_file(file: Path) -> Path:
     return dst.joinpath(_get_filename_without_suffix(file) + '.rvc')
 
 
+CALLBACK_FILE_INDEX = 0
+
+
+def _get_callback_file(file: Path) -> str:
+    global CALLBACK_FILE_INDEX
+    CALLBACK_FILE_INDEX += 1
+
+    return str(_get_dst_file(file))[:-4] + f'${CALLBACK_FILE_INDEX}.rvc'
+
+
 class _Generator:
 
     def identifier(self, file, ast, code: Callable[[str], None]):
@@ -82,12 +92,10 @@ class _Generator:
         _, params, prop = ast
         instructions = []
         _code = instructions.append
-        # for p in params:
-        #     _code(f'PUSH f{p}')
 
         _translate(file, prop, _code)
 
-        callback_file = str(_get_dst_file(file))[:-4] + '$1.rvc'
+        callback_file = _get_callback_file(file)
         with open(callback_file, encoding='utf-8', mode='w') as f:
             f.write('\n'.join(instructions))
 

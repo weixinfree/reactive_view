@@ -50,7 +50,7 @@ PUSH compile/dsl$1.rvc
 CALLBACK
 PUSH onClick
 ATTR
-PUSH compile/dsl$1.rvc
+PUSH compile/dsl$2.rvc
 CALLBACK
 PUSH onItemClick
 ATTR
