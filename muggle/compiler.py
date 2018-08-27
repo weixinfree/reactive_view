@@ -39,16 +39,16 @@ def _get_dst_file(file: Path) -> Path:
 
 class _Generator:
 
-    def identifier(self, ast, code: Callable[[str], None]):
+    def identifier(self, file, ast, code: Callable[[str], None]):
         code(f'PUSH {ast}')
 
-    def unit(self, ast, code: Callable[[str], None]):
+    def unit(self, file, ast, code: Callable[[str], None]):
         _, value, unit = ast
         code(f'PUSH {unit}')
         code(f'PUSH {value}')
         code(f'UNIT {value}')
 
-    def prop(self, ast, code: Callable[[str], None]):
+    def prop(self, file, ast, code: Callable[[str], None]):
         obj, f, *fields = ast[1]
         code(f'PUSH {obj}')
         code(f'PUSH {f}')
@@ -57,13 +57,13 @@ class _Generator:
             code(f'PUSH {field}')
             code(f'PROP')
 
-    def res_ref(self, ast, code: Callable[[str], None]):
+    def res_ref(self, file, ast, code: Callable[[str], None]):
         _, _type, _name = ast
         code(f'PUSH {_name}')
         code(f'PUSH {_type}')
         code(f'RES')
 
-    def func(self, ast, code: Callable[[str], None]):
+    def func(self, file, ast, code: Callable[[str], None]):
         _, f_name, args = ast
         if args:
             if '$' in args:
@@ -78,24 +78,28 @@ class _Generator:
         code(f'PUSH {f_name}')
         code(f'CALL')
 
-    def callback(self, ast, code: Callable[[str], None]):
+    def callback(self, file, ast, code: Callable[[str], None]):
         _, params, prop = ast
         instructions = []
         _code = instructions.append
-        for p in params:
-            _code(f'PUSH f{p}')
-        _translate(prop, _code)
+        # for p in params:
+        #     _code(f'PUSH f{p}')
 
-        insturcts = '"' + "; ".join(instructions) + '"'
-        code(f'PUSH {insturcts}')
+        _translate(file, prop, _code)
+
+        callback_file = str(_get_dst_file(file))[:-4] + '$1.rvc'
+        with open(callback_file, encoding='utf-8', mode='w') as f:
+            f.write('\n'.join(instructions))
+
+        code(f'PUSH {callback_file}')
         code(f'CALLBACK')
 
-    def pipe(self, ast, code: Callable[[str], None]):
+    def pipe(self, file, ast, code: Callable[[str], None]):
         _, pipes = ast
         for p in pipes:
-            _translate(p, code)
+            _translate(file, p, code)
 
-    def include(self, ast, code: Callable[[str], None]):
+    def include(self, file, ast, code: Callable[[str], None]):
         _, component = ast
         link = SRC.joinpath(component)
         _process(link)
@@ -103,33 +107,33 @@ class _Generator:
         code(f'PUSH {dst}')
         code(f'INCLUDE')
 
-    def computed_value(self, ast, code: Callable[[str], None]):
+    def computed_value(self, file, ast, code: Callable[[str], None]):
         _, express = ast
-        _translate(express, code)
+        _translate(file, express, code)
 
-    def attr(self, ast, code: Callable[[str], None]):
+    def attr(self, file, ast, code: Callable[[str], None]):
         _, attr_name, attr_value = ast
-        _translate(attr_value, code)
+        _translate(file, attr_value, code)
         code(f'PUSH {attr_name}')
         code(f'ATTR')
 
-    def component(self, ast, code: Callable[[str], None]):
+    def component(self, file, ast, code: Callable[[str], None]):
         _, component, attrs = ast
         code(f'PUSH {component}')
         code(f'NEW')
         for _attr in attrs:
-            _translate(_attr, code)
+            _translate(file, _attr, code)
 
 
 _generator = _Generator()
 
 
-def _translate(ast, code: Callable[[str], None]):
+def _translate(file, ast, code: Callable[[str], None]):
     if isinstance(ast, tuple):
-        getattr(_generator, ast[0])(ast, code)
+        getattr(_generator, ast[0])(file, ast, code)
     else:
         assert isinstance(ast, str), str(ast) + ' is not string'
-        _generator.identifier(ast, code)
+        _generator.identifier(file, ast, code)
 
 
 def _process(file):
@@ -146,7 +150,7 @@ def _process(file):
     ast = _parse(_read(file))
     instructions = []
     code = instructions.append
-    _translate(ast, code)
+    _translate(file, ast, code)
 
     with open(dst, encoding='utf-8', mode='w') as f:
         f.write('\n'.join(instructions))

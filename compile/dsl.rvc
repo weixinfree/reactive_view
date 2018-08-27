@@ -46,11 +46,11 @@ PUSH gt
 CALL
 PUSH visible
 ATTR
-PUSH "PUSH user; PUSH onClick; PROP"
+PUSH compile/dsl$1.rvc
 CALLBACK
 PUSH onClick
 ATTR
-PUSH "PUSH fview; PUSH fposition; PUSH user; PUSH onItemClick; PROP"
+PUSH compile/dsl$1.rvc
 CALLBACK
 PUSH onItemClick
 ATTR
